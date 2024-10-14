@@ -57,6 +57,7 @@ public class GameManager : Singleton<GameManager>
                 Card drawCard = Deck.DrawCard();
                 AddCardToPlayerHand(drawCard, player);
             }
+            AudioGame.Instance.PlayAudioClip();
             UIManager.Instance.UpdateTextCard(Players);
             yield return new WaitForSeconds(0.1f);
         }
@@ -164,6 +165,7 @@ public class GameManager : Singleton<GameManager>
     {
         currentCard.GetComponentInChildren<CardInteraction>().enabled = false;
         currentCard.transform.SetParent(discardPileTransform);
+        AudioGame.Instance.PlayAudioClip();
         currentCard.transform.DOMove(discardPileTransform.transform.position, 0.4f).OnComplete(() =>
         {
             currentCard.transform.localPosition = Vector3.zero;
