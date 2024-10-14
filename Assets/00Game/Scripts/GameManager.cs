@@ -18,7 +18,6 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private int currentPlayer = 0; //người chơi hiện tại
     [SerializeField] private bool turnPlayer;
     private int nextCountTurn = 1;
-
     public CardDisplay TopCard
     {
         get => topCard;
@@ -31,6 +30,14 @@ public class GameManager : Singleton<GameManager>
     }
     private void Start()
     {
+        ResetGame();
+       
+    }
+
+    private void ResetGame()
+    {
+        // Reset lại các biến và trạng thái ở đây
+        Players.Clear();
         Deck.InitDeck();
         Deck.ShuffleDeck();
         InitPlayer();

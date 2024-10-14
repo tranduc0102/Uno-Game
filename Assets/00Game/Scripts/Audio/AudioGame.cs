@@ -8,10 +8,14 @@ public class AudioGame : Singleton<AudioGame>
     public AudioSource audioSFX;
 
     public AudioClip audioClipCard;
+    public bool isPlayMusic = true;
 
     public void PlayAudioClip()
     {
-        audioSFX.clip = audioClipCard;
-        audioSFX.Play();
+        if (isPlayMusic)
+        {
+            audioSFX.clip = audioClipCard;
+            audioSFX.Play();
+        }
     }
 }
