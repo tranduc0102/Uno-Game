@@ -1,29 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+using Unity.VisualScripting;
 
 public class UIManager : Singleton<UIManager>
 {
     [Header("Panel Choice Color")]
-    public GameObject panelColor;
-    public Button btnRed;
-    public Button btnYellow;
-    public Button btnGreen;
-    public Button btnBlue;
+    [HideInInspector] public GameObject panelColor;
+    [SerializeField] private Button btnRed;
+    [SerializeField] private Button btnYellow;
+    [SerializeField] private Button btnGreen;
+    [SerializeField] private Button btnBlue;
 
     [Header("TagBar color")]
-    public Image Mid; //dùng để thay đổi đổi thanh điều hướng của game
-    public Image Left;
-    public Image Right;
+    [SerializeField] private Image Mid; //dùng để thay đổi đổi thanh điều hướng của game
+    [SerializeField] private Image Left;
+    [SerializeField] private Image Right;
 
     [Header("Current Player")]
-    public List<Image> list;
+    [SerializeField] private List<Image> listColorTurn;
+    [SerializeField] private List<TextMeshProUGUI> txtCountCardInHand;
 
 
-    void Start()
+    private void Reset()
     {
+        LoadCompoment();
+    }
+    private void Start()
+    {
+        LoadCompoment();
         panelColor.SetActive(false);
         btnRed.onClick.AddListener((() => ClickButtonColor("RED")));
         btnYellow.onClick.AddListener((() => ClickButtonColor("YELLOW")));
@@ -31,6 +38,49 @@ public class UIManager : Singleton<UIManager>
         btnBlue.onClick.AddListener(()=>ClickButtonColor("BLUE"));
     }
 
+    private void LoadCompoment()
+    {
+        LoadPanelColor();
+        TagBarColor();
+        LoadColorTurn();
+        LoadText();
+    }
+    private void LoadPanelColor()
+    {
+        if (panelColor == null)
+        {
+            panelColor = transform.GetChild(2).gameObject;
+        }
+        if (btnBlue == null || btnRed==null || btnGreen == null || btnYellow ==null) {
+            btnRed = panelColor.transform.GetChild(0).GetComponent<Button>();
+            btnYellow = panelColor.transform.GetChild(1).GetComponent<Button>();
+            btnGreen = panelColor.transform.GetChild(2).GetComponent<Button>();
+            btnBlue = panelColor.transform.GetChild(3).GetComponent<Button>();
+        }
+
+    }
+    private void TagBarColor()
+    {
+        if (Mid == null || Left == null || Right == null)
+        {
+            Mid = transform.GetChild(3).GetChild(0).GetComponent<Image>();
+            Left = transform.GetChild(3).GetChild(1).GetComponent<Image>();
+            Right = transform.GetChild(3).GetChild(2).GetComponent<Image>();
+        }
+    }
+    private void LoadColorTurn()
+    {
+        listColorTurn.Clear();
+        listColorTurn = transform.GetChild(4).GetComponentsInChildren<Image>().ToList();
+    }
+    private void LoadText()
+    {
+        if (txtCountCardInHand.Count != 0) return;
+        foreach(var obj in listColorTurn)
+        {
+            txtCountCardInHand.Add(obj.transform.GetComponentInChildren<TextMeshProUGUI>());
+        }
+    }
     private void ClickButtonColor(string color)
     {
         switch (color)
@@ -93,12 +143,15 @@ public class UIManager : Singleton<UIManager>
 
     public void UITurnPlayer(int oldPlayer,int currentPlayer)
     {
-        list[oldPlayer].color = Color.black;
-        list[currentPlayer].color = Color.green;
+        listColorTurn[oldPlayer].color = Color.black;
+        listColorTurn[currentPlayer].color = Color.green;
     }
- /*   public void UpdateTextCard(int currendPlayer)
+    public void UpdateTextCard(List<Player> players)
     {
-        list[currentPlayer].GetComponentInChildren<TextMeshProUGUI>().text = cardInHand.ToString();
-    }*/
+        foreach (Player player in players) {
+            int playerIndex = players.IndexOf(player); // Lấy vị trí của player trong danh sách
+            txtCountCardInHand[playerIndex].text = player.playerHand.Count.ToString();
+        }
+    }
     
 }

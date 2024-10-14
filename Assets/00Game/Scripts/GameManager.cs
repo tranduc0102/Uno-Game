@@ -57,6 +57,7 @@ public class GameManager : Singleton<GameManager>
                 Card drawCard = Deck.DrawCard();
                 AddCardToPlayerHand(drawCard, player);
             }
+            UIManager.Instance.UpdateTextCard(Players);
             yield return new WaitForSeconds(0.1f);
         }
         SetupFirstCard();
@@ -112,7 +113,6 @@ public class GameManager : Singleton<GameManager>
                 color = CardColor.GREEN;
                 break;
         }
-
         return color;
     }
 
@@ -201,6 +201,7 @@ public class GameManager : Singleton<GameManager>
             currentPlayer = Players.Count - 1;
         }
         turnPlayer = Players[currentPlayer].isHuman; // Only allow human player to have tur
+        UIManager.Instance.UpdateTextCard(Players);
         UIManager.Instance.UITurnPlayer(old, currentPlayer);
         if (!turnPlayer)
         {
