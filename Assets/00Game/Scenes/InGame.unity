@@ -256,7 +256,7 @@ GameObject:
   - component: {fileID: 142503929}
   - component: {fileID: 142503928}
   m_Layer: 5
-  m_Name: Losse
+  m_Name: PanelWinAndLosse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4113,6 +4113,7 @@ MonoBehaviour:
   - {fileID: 751560127}
   - {fileID: 1211287884}
   - {fileID: 1493356773}
+  panelWin: {fileID: 0}
 --- !u!1 &2146907247
 GameObject:
   m_ObjectHideFlags: 0

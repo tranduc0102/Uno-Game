@@ -23,6 +23,8 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private List<Image> listColorTurn;
     [SerializeField] private List<TextMeshProUGUI> txtCountCardInHand;
 
+    [Header("UI WIN AND LOSSE")]
+    [SerializeField] private GameObject panelWin;
 
     private void Reset()
     {
@@ -153,5 +155,8 @@ public class UIManager : Singleton<UIManager>
             txtCountCardInHand[playerIndex].text = player.playerHand.Count.ToString();
         }
     }
-    
+    public void ActivePanelWin()
+    {
+
+    }
 }

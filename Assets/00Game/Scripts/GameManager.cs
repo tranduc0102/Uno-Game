@@ -18,6 +18,9 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private int currentPlayer = 0; //người chơi hiện tại
     [SerializeField] private bool turnPlayer;
     private int nextCountTurn = 1;
+    private bool isPlay = true;
+
+    private int idWin = 0;
     public CardDisplay TopCard
     {
         get => topCard;
@@ -27,6 +30,10 @@ public class GameManager : Singleton<GameManager>
     public bool TurnPlayer
     {
         get => turnPlayer;
+    }
+    public int IDWin
+    {
+        get => idWin;
     }
     private void Start()
     {
@@ -75,15 +82,18 @@ public class GameManager : Singleton<GameManager>
     //Hàm này để thêm thẻ vô tay người chơi ví dụ như bốc bài hoặc bị Draw
     private void AddCardToPlayerHand(Card drawCard, Player player)
     {
-        Transform handTransform = player.isHuman ? playerHandTransform : aiHandTransforms[Players.IndexOf(player) - 1];
-        GameObject card = Instantiate(cardPrefab, handTransform, false);
-        CardDisplay cardDisplay = card.GetComponentInChildren<CardDisplay>();
-        cardDisplay.SetCard(drawCard, player);
-        player.playerHand.Add(drawCard);
-
-        if (!player.isHuman)
+        if (isPlay)
         {
-            cardDisplay.HintCard(); // Display AI hand hint
+            Transform handTransform = player.isHuman ? playerHandTransform : aiHandTransforms[Players.IndexOf(player) - 1];
+            GameObject card = Instantiate(cardPrefab, handTransform, false);
+            CardDisplay cardDisplay = card.GetComponentInChildren<CardDisplay>();
+            cardDisplay.SetCard(drawCard, player);
+            player.playerHand.Add(drawCard);
+
+            if (!player.isHuman)
+            {
+                cardDisplay.HintCard(); // Display AI hand hint
+            }
         }
     }
 
@@ -127,30 +137,47 @@ public class GameManager : Singleton<GameManager>
     // Hàm này dùng khi bốc bài
     public void DrawCardInDeck()
     {
-        Card card = Deck.DrawCard();
-        if (card != null)
+        if (isPlay)
         {
-            Player player = Players[currentPlayer];
-            AddCardToPlayerHand(card, player);
+            Card card = Deck.DrawCard();
+            if (card != null)
+            {
+                Player player = Players[currentPlayer];
+                AddCardToPlayerHand(card, player);
+            }
         }
     }
     //Hàm này khi người chơi hoặc AI dùng thẻ trên tay 
     public void PlayCard(CardDisplay cardDisplay = null,Card card = null)
     {
-        Card cardToPlay = cardDisplay?.MyCard??card;
-        if (cardDisplay == null && card != null)
+        if (isPlay)
         {
-            cardDisplay = FindCardDiplayForCard(card);
-        }
-        if(!CheckCard(cardToPlay))return;
-        if (cardDisplay != null)
-        {
-            cardDisplay.ShowCard();
-            Players[currentPlayer].PlayCard(cardToPlay);
-            MoveCardToPile(cardDisplay.transform.parent.gameObject, cardToPlay);
-            UpdateTopCard(cardDisplay);
+            Card cardToPlay = cardDisplay?.MyCard ?? card;
+            if (cardDisplay == null && card != null)
+            {
+                cardDisplay = FindCardDiplayForCard(card);
+            }
+            if (!CheckCard(cardToPlay)) return;
+            if (cardDisplay != null)
+            {
+                cardDisplay.ShowCard();
+                Players[currentPlayer].PlayCard(cardToPlay);
+                if (Players[currentPlayer].playerHand.Count <= 0 && Players[currentPlayer].isHuman)
+                {
+                    idWin = 1;
+                    isPlay = false;
+                }
+                else if (Players[currentPlayer].playerHand.Count <= 0)
+                {
+                    idWin = 2;
+                    isPlay = false;
+                }
+                MoveCardToPile(cardDisplay.transform.parent.gameObject, cardToPlay);
+                UpdateTopCard(cardDisplay);
+            }
         }
     }
+
     //Hàm này tìm thẻ trên tay của AI ứng với phần hiện thị của Thẻ 
     private CardDisplay FindCardDiplayForCard(Card card)
     {
