@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 
 public class UIManager : Singleton<UIManager>
 {
+    [SerializeField] private Transform Hover;
     [Header("Panel Choice Color")]
     [HideInInspector] public GameObject panelColor;
     [SerializeField] private Button btnRed;
@@ -24,7 +25,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private List<TextMeshProUGUI> txtCountCardInHand;
 
     [Header("UI WIN AND LOSSE")]
-    [SerializeField] private GameObject panelWin;
+    [SerializeField] private WinGame panelWin;
 
     private void Reset()
     {
@@ -42,16 +43,18 @@ public class UIManager : Singleton<UIManager>
 
     private void LoadCompoment()
     {
+        Hover = transform.GetChild(0);
         LoadPanelColor();
         TagBarColor();
         LoadColorTurn();
         LoadText();
+        LoadPanelWin();
     }
     private void LoadPanelColor()
     {
         if (panelColor == null)
         {
-            panelColor = transform.GetChild(2).gameObject;
+            panelColor = Hover.GetChild(2).gameObject;
         }
         if (btnBlue == null || btnRed==null || btnGreen == null || btnYellow ==null) {
             btnRed = panelColor.transform.GetChild(0).GetComponent<Button>();
@@ -65,15 +68,15 @@ public class UIManager : Singleton<UIManager>
     {
         if (Mid == null || Left == null || Right == null)
         {
-            Mid = transform.GetChild(3).GetChild(0).GetComponent<Image>();
-            Left = transform.GetChild(3).GetChild(1).GetComponent<Image>();
-            Right = transform.GetChild(3).GetChild(2).GetComponent<Image>();
+            Mid = Hover.GetChild(3).GetChild(0).GetComponent<Image>();
+            Left = Hover.GetChild(3).GetChild(1).GetComponent<Image>();
+            Right = Hover.GetChild(3).GetChild(2).GetComponent<Image>();
         }
     }
     private void LoadColorTurn()
     {
         listColorTurn.Clear();
-        listColorTurn = transform.GetChild(4).GetComponentsInChildren<Image>().ToList();
+        listColorTurn = Hover.GetChild(4).GetComponentsInChildren<Image>().ToList();
     }
     private void LoadText()
     {
@@ -82,6 +85,10 @@ public class UIManager : Singleton<UIManager>
         {
             txtCountCardInHand.Add(obj.transform.GetComponentInChildren<TextMeshProUGUI>());
         }
+    }
+    private void LoadPanelWin()
+    {
+        panelWin = Hover.GetChild(9).GetComponent<WinGame>();
     }
     private void ClickButtonColor(string color)
     {
@@ -155,8 +162,17 @@ public class UIManager : Singleton<UIManager>
             txtCountCardInHand[playerIndex].text = player.playerHand.Count.ToString();
         }
     }
-    public void ActivePanelWin()
+    public void ActivePanelWin(int idWin)
     {
-
+        if(idWin == 1)
+        {
+            panelWin.Message("WIN");
+            panelWin.gameObject.SetActive(true);
+        }
+        else
+        {
+            panelWin.Message("LOSSE");
+            panelWin.gameObject.SetActive(true);
+        }
     }
 }

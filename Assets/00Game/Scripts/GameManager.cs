@@ -166,11 +166,13 @@ public class GameManager : Singleton<GameManager>
                 {
                     idWin = 1;
                     isPlay = false;
+                    UIManager.Instance.ActivePanelWin(IDWin);
                 }
                 else if (Players[currentPlayer].playerHand.Count <= 0)
                 {
                     idWin = 2;
                     isPlay = false;
+                    UIManager.Instance.ActivePanelWin(IDWin);
                 }
                 MoveCardToPile(cardDisplay.transform.parent.gameObject, cardToPlay);
                 UpdateTopCard(cardDisplay);
